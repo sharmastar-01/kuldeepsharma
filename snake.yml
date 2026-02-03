@@ -1,12 +1,27 @@
-name: My First Workflow
-on: [push] # This triggers the workflow every time you push code
+name: Daily Automation
+
+on:
+  schedule:
+    # This runs at 00:00 UTC every single day
+    - cron: '0 0 * * *'
+  workflow_dispatch: # This allows you to run it manually for testing
 
 jobs:
-  build:
+  auto-run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4 # This pulls your code into the runner
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Run a script
-        run: echo "Hello, GitHub Actions is working!"
+      - name: Execute Daily Task
+        run: |
+          echo "Current Date: $(date)" > daily_log.txt
+          echo "Automated daily update complete."
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add daily_log.txt
+          git commit -m "Daily automated update [skip ci]" || echo "No changes to commit"
+          git push
