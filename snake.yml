@@ -1,27 +1,26 @@
-name: Daily Automation
+name: Daily Contribution Bot
 
 on:
   schedule:
-    # This runs at 00:00 UTC every single day
-    - cron: '0 0 * * *'
-  workflow_dispatch: # This allows you to run it manually for testing
+    # This uses Cron syntax. '0 9 * * *' means every day at 9:00 AM UTC.
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Allows you to run it manually via the 'Actions' tab if you want
 
 jobs:
-  auto-run:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Execute Daily Task
+      - name: Make a small change
         run: |
-          echo "Current Date: $(date)" > daily_log.txt
-          echo "Automated daily update complete."
+          echo "Last automated update: $(date)" > last_update.txt
 
-      - name: Commit and Push changes
+      - name: Commit and Push
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add daily_log.txt
-          git commit -m "Daily automated update [skip ci]" || echo "No changes to commit"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add last_update.txt
+          git commit -m "chore: daily automated update"
           git push
