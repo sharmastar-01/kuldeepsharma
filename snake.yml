@@ -1,32 +1,22 @@
 name: Daily Contribution Bot
-
 on:
   schedule:
-    # This triggers at 00:00 UTC (Midnight) every day
-    - cron: '0 0 * * *'
-  workflow_dispatch: # This allows you to click "Run workflow" manually to test it
+    - cron: '0 0 * * *' # Midnight daily
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # Permissions are required to push changes back to the repo
     permissions:
       contents: write
-      
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Make a small change
+      - uses: actions/checkout@v4
+      - name: Update log
+        run: echo "Update on $(date)" > contribution_log.txt
+      - name: Push change
         run: |
-          echo "Last automated update: $(date)" > last_update.txt
-
-      - name: Commit and Push
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add last_update.txt
-          # The "|| exit 0" prevents the workflow from failing if there are no changes
-          git commit -m "chore: daily automated update" || exit 0
+          git config --local user.email "your-github-email@example.com"
+          git config --local user.name "sharmastar-01"
+          git add contribution_log.txt
+          git commit -m "Daily update"
           git push
